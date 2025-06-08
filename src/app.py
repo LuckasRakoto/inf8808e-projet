@@ -21,10 +21,9 @@ import preprocess
 import bubble
 
 app = dash.Dash(__name__)
-app.title = 'TP4 | INF8808'
-
-with open('../src/assets/data/countriesData.json') as data_file:
-    data = json.load(data_file)
+app.title = 'INF8808e | Project | Team 9'
+path = './src/assets/data/student_habits_performance'
+data = pd.read_csv(path)
 
 df_2000 = pd.json_normalize(data, '2000')
 df_2015 = pd.json_normalize(data, '2015')
