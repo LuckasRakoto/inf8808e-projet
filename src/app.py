@@ -1,64 +1,41 @@
+# app.py
 
-# -*- coding: utf-8 -*-
-
-'''
-    File name: app.py
-    Author: Olivia Gélinas
-    Course: INF8808
-    Python Version: 3.8
-
-    This file contains the source code for TP4.
-'''
-import json
-
-import dash
-import dash_html_components as html
-import dash_core_components as dcc
-
+from dash import Dash, html, dcc
 import pandas as pd
+from cluster_scatter import get_cluster_figure
+from correlation_heatmap import get_correlation_figure
 
-import preprocess
-import bubble
+# Initialize the Dash app
+app = Dash(__name__)
+app.title = "Student Behavior Visualization"
 
-app = dash.Dash(__name__)
-app.title = 'INF8808e | Project | Team 9'
-path = './src/assets/data/student_habits_performance'
-data = pd.read_csv(path)
+# Load the dataset
+data_path = "./data/Student_Mental_health_and_academic_performance.csv"
+df = pd.read_csv(data_path)
 
-df_2000 = pd.json_normalize(data, '2000')
-df_2015 = pd.json_normalize(data, '2015')
+# Generate figures
+cluster_fig = get_cluster_figure(df)
+heatmap_fig = get_correlation_figure(df)
 
-df_2000 = preprocess.round_decimals(df_2000)
-df_2015 = preprocess.round_decimals(df_2015)
-
-gdp_range = preprocess.get_range('GDP', df_2000, df_2015)
-co2_range = preprocess.get_range('CO2', df_2000, df_2015)
-
-df = preprocess.combine_dfs(df_2000, df_2015)
-df = preprocess.sort_dy_by_yr_continent(df)
-
-fig = bubble.get_plot(df, gdp_range, co2_range)
-fig = bubble.update_animation_hover_template(fig)
-fig = bubble.update_animation_menu(fig)
-fig = bubble.update_axes_labels(fig)
-fig = bubble.update_template(fig)
-fig = bubble.update_legend(fig)
-
-fig.update_layout(height=600, width=1000)
-fig.update_layout(dragmode=False)
-
+# Layout of the app
 app.layout = html.Div(className='content', children=[
     html.Header(children=[
-        html.H1('GDP vs. CO2 emissions'),
-        html.H2('In countries around the world')
+        html.H1("Student Habits vs. Academic Performance"),
+        html.H2("Cluster Profiles & Behavioral Patterns")
     ]),
+
     html.Main(className='viz-container', children=[
-        dcc.Graph(className='graph', figure=fig, config=dict(
-            scrollZoom=False,
-            showTips=False,
-            showAxisDragHandles=False,
-            doubleClick=False,
-            displayModeBar=False
-            ))
+        html.Section(children=[
+            html.H3("Cluster-Based Scatterplot"),
+            dcc.Graph(figure=cluster_fig)
+        ]),
+
+        html.Section(children=[
+            html.H3("Correlation Matrix of Habits"),
+            dcc.Graph(figure=heatmap_fig)
+        ])
     ])
 ])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
