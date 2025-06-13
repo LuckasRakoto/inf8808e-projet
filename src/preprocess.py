@@ -2,67 +2,40 @@
     Contains some functions to preprocess the data used in the visualisation.
 '''
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
-def round_decimals(my_df):
-    '''
-        Rounds all the numbers in the dataframe to two decimal points
+def get_groups_radar_chart(my_df):
 
-        args:
-            my_df: The dataframe to preprocess
-        returns:
-            The dataframe with rounded numbers
-    '''
-    return my_df.round(2) 
+    habits = ['study_hours_per_day', 'social_media_hours', 'netflix_hours',
+               'sleep_hours','diet_quality', 'exercise_frequency',
+              'mental_health_rating']
+    
+    df = my_df.dropna(subset=habits + ['exam_score'])
 
+    df['diet_quality'] = df['diet_quality'].map({'Poor': 1, 'Fair': 2, 'Good' : 3})
 
-def get_range(col, df1, df2):
-    '''
-        An array containing the minimum and maximum values for the given
-        column in the two dataframes.
+    p85 = df['exam_score'].quantile(0.85)
+    p50 = df['exam_score'].quantile(0.50)
 
-        args:
-            col: The name of the column for which we want the range
-            df1: The first dataframe containing a column with the given name
-            df2: The first dataframe containing a column with the given name
-        returns:
-            The minimum and maximum values across the two dataframes
-    '''
-    arr = []
-    if col in df1.columns:
-        arr.append([df1[col].min(),df1[col].max()])
+    def assign_group(score):
+        if score < p50: 
+            return 'Low Performers'
+        if score < p85:
+            return 'Mid-Level Performers'
+        elif score >= p50:
+            return 'Top Performers'
 
-    if col in df2.columns:
-        arr.append([df2[col].min(),df2[col].max()])
-    return arr 
+    df['performance_group'] = df['exam_score'].apply(assign_group)
 
+    scaler = MinMaxScaler()
+    df_normalized = df.copy()
+    df_normalized[habits] = scaler.fit_transform(df[habits])
 
-def combine_dfs(df1, df2):
-    '''
-        Combines the two dataframes, adding a column 'Year' with the
-        value 2000 for the rows from the first dataframe and the value
-        2015 for the rows from the second dataframe
+    group_means = df_normalized.groupby('performance_group')[habits].mean().reset_index()
 
-        args:
-            df1: The first dataframe to combine
-            df2: The second dataframe, to be appended to the first
-        returns:
-            The dataframe containing both dataframes provided as arg.
-            Each row of the resulting dataframe has a column 'Year'
-            containing the value 2000 or 2015, depending on its
-            original dataframe.
-    '''
-    df1['Year'] = 2000
-    df2['Year'] = 2015
-    return pd.concat([df1,df2]) 
+    order = ['Low Performers', 'Mid-Level Performers', 'Top Performers']
+    group_means['performance_group'] = pd.Categorical(group_means['performance_group'], categories=order, ordered=True)
+    group_means = group_means.sort_values('performance_group').reset_index(drop=True)
 
 
-def sort_dy_by_yr_continent(my_df):
-    '''
-        Sorts the dataframe by year and then by continent.
-
-        args:
-            my_df: The dataframe to sort
-        returns:
-            The sorted dataframe.
-    '''
-    return my_df.sort_values(['Year', 'Continent']) 
+    return group_means
