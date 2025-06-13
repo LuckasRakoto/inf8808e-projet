@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 from cluster_scatter import get_cluster_figure
 from correlation_heatmap import get_correlation_figure
 from radar_chart import get_radar_chart
+from waffle_chart import get_waffle_figure
+from sankey_chart import get_sankey_chart_figure
 
 app = dash.Dash(__name__)
 app.title = 'Student Habits vs Performance'
@@ -83,7 +85,22 @@ app.layout = html.Div([
 
     html.Button("Compare My Habits", id='update-button', n_clicks=0),
 
-    dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '700px'}, figure=get_radar_chart(df))
+    dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '700px'}, figure=get_radar_chart(df)),
+
+    dcc.Graph(id='sankey-chart', style={'width': '100%', 'height': '700px'}, figure=get_sankey_chart_figure(df)),
+
+    dcc.Graph(
+        id='waffle-chart',
+        figure=get_waffle_figure(df),
+        style={
+            'margin': '0 auto',
+            'height': '600px',
+            'width': '30%',
+            'display': 'block'
+        },
+        config={'displayModeBar': False}
+    )
+
 ])
 
 # === CALLBACK ===

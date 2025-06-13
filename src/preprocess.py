@@ -42,3 +42,29 @@ def get_groups_radar_chart(my_df):
 
 
     return group_means, mid_means
+
+def preprocess_waffle_chart_data(df):
+    
+    def categorize_score(score):
+        if score >= 85:
+            return 'Top'
+        elif score >= 50:
+            return 'Mid'
+        else:
+            return 'Low'
+    
+    df = df[['parental_education_level', 'exam_score']]
+    df['exam_score'] = df['exam_score'].apply(categorize_score)
+    df['parental_education_level'] = df['parental_education_level'].fillna('None')
+    
+    return df
+
+def preprocess_sankey_chart_data(df):
+    df["PerformanceGroup"] = "Mid"
+    df.loc[df["exam_score"] >= 85, "PerformanceGroup"] = "Top"
+    df.loc[df["exam_score"] <= 50, "PerformanceGroup"] = "Low"
+
+    diet_map = {"Poor": 1, "Fair": 2, "Good": 3}
+    df["diet_quality_numeric"] = df["diet_quality"].map(diet_map)
+    
+    return df
