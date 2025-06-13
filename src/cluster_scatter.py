@@ -6,8 +6,8 @@ from sklearn.cluster import KMeans
 
 def get_cluster_figure(df):
     habits = [
-        'sleep_hours', 'study_hours_per_day', 'screen_time',
-        'stress_level', 'social_media_hours', 'attendance_percentage'
+        'sleep_hours', 'study_hours_per_day', 'netflix_hours',
+        'mental_health_rating', 'social_media_hours', 'attendance_percentage'
     ]
     df = df.dropna(subset=habits + ['gender'])
     X = StandardScaler().fit_transform(df[habits])
@@ -27,7 +27,7 @@ def get_cluster_figure(df):
     grouped = df.groupby("cluster").agg({
         'sleep_hours': 'mean',
         'study_hours_per_day': 'mean',
-        'screen_time': 'mean',
+        'netflix_hours': 'mean',
         'social_media_hours': 'mean',
         'gender': lambda g: 100 * (g == 'female').mean()
     }).round(1)
@@ -37,7 +37,7 @@ def get_cluster_figure(df):
             f"<b>{cluster_labels[row.name]}</b><br>"
             f"Sleep: {row['sleep_hours']} hrs<br>"
             f"Study: {row['study_hours_per_day']} hrs<br>"
-            f"Screen Time: {row['screen_time']} hrs<br>"
+            f"Screen Time: {row['netflix_hours']} hrs<br>"
             f"Social Media: {row['social_media_hours']} hrs<br>"
             f"% Female: {row['gender']}%"
         )
