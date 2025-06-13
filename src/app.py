@@ -83,7 +83,7 @@ app.layout = html.Div([
 
     html.Button("Compare My Habits", id='update-button', n_clicks=0),
 
-    dcc.Graph(id='radar-chart', figure=get_radar_chart(df))
+    dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '700px'}, figure=get_radar_chart(df))
 ])
 
 # === CALLBACK ===
@@ -104,5 +104,9 @@ def update_radar_chart(n_clicks, *user_values):
         'mental_health_rating': (1, 10)
     }
 
-    normalized = [(v - ranges[habit][0]) / (ranges[habit][1] - ranges[habit][0]) for habit, v in zip(habits, habit_values)]
+    normalized = [
+        5 * (v - ranges[habit][0]) / (ranges[habit][1] - ranges[habit][0])
+        for habit, v in zip(habits, habit_values)
+    ]
+
     return get_radar_chart(df, user_data=normalized)
