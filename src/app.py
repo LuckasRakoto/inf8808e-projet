@@ -7,6 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 from cluster_scatter import get_cluster_figure
 from correlation_heatmap import get_correlation_figure
 from radar_chart import get_radar_chart
+from bar_chart import get_bar_chart_figure
 
 app = dash.Dash(__name__)
 app.title = 'Student Habits vs Performance'
@@ -30,6 +31,11 @@ slider_config = {
 # === LAYOUT ===
 app.layout = html.Div([
     html.H1("Student Behavior Profiles & Academic Performance"),
+    
+    html.Div([
+        html.H2("Average Student Habits"),
+        dcc.Graph(figure=get_bar_chart_figure(df))
+    ]),
 
     html.Div([
         html.H2("Cluster-Based Scatterplot"),
