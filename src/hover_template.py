@@ -1,21 +1,22 @@
+
 '''
     Provides the template for the tooltips.
 '''
 
 
-def get_bubble_hover_template():
-    '''
-        Sets the template for the hover tooltips.
-        
-        Contains four labels, followed by their corresponding
-        value and units where appropriate, separated by a
-        colon : country, population, GDP and CO2 emissions.
+def get_radar_hover_template(user=False):
+    if user:
+        return (
+            "<b>Habit:</b> %{theta}<br>"
+            "<b>Your value:</b> %{r:.2f}<br>"
+            "<b>Advice:</b> %{customdata}<extra></extra>"
+        )
+    else:
+        return (
+            "<b>Group:</b> %{fullData.name}<br>"
+            "<b>Habit:</b> %{theta}<br>"
+            "<b>Average value:</b> %{r:.2f}<extra></extra>"
+        )
 
-        The labels' font is bold and the values are normal weight
 
-        returns:
-            The content of the tooltip
-    '''
-    # TODO : Generate tooltip
 
-    return ''
