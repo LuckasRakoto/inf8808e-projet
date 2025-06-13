@@ -5,7 +5,7 @@ from cluster_scatter import get_cluster_figure
 from correlation_heatmap import get_correlation_figure
 
 # Load data
-df = pd.read_csv("data/Student_Mental_health_and_academic_performance.csv")
+df = pd.read_csv("data/student_habits_performance.csv")
 
 # Initialize app
 app = dash.Dash(__name__)
