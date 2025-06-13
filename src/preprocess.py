@@ -27,7 +27,7 @@ def get_groups_radar_chart(my_df):
 
     df['performance_group'] = df['exam_score'].apply(assign_group)
 
-    scaler = MinMaxScaler()
+    scaler = MinMaxScaler(feature_range=(0,5))
     df_normalized = df.copy()
     df_normalized[habits] = scaler.fit_transform(df[habits])
 
@@ -37,5 +37,8 @@ def get_groups_radar_chart(my_df):
     group_means['performance_group'] = pd.Categorical(group_means['performance_group'], categories=order, ordered=True)
     group_means = group_means.sort_values('performance_group').reset_index(drop=True)
 
+    mid_means_row = group_means[group_means['performance_group'] == 'Mid-Level Performers']
+    mid_means = mid_means_row[habits].iloc[0].tolist() if not mid_means_row.empty else [2.5]*len(habits)
 
-    return group_means
+
+    return group_means, mid_means
