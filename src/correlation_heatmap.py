@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 def get_correlation_figure(df):
     corr_vars = [
         'study_hours_per_day', 'social_media_hours', 'netflix_hours',
-        'attendance_percentage', 'sleep_hours', 'exercise_frequency', 'mental_health_ranking', 'exam_score'
+        'attendance_percentage', 'sleep_hours', 'exercise_frequency', 'mental_health_rating', 'exam_score'
     ]
     corr_df = df[corr_vars].dropna()
     corr_matrix = corr_df.corr().round(2)
