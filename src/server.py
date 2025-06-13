@@ -1,30 +1,21 @@
-import dash
-from dash import dcc, html
-import pandas as pd
-from cluster_scatter import get_cluster_figure
-from correlation_heatmap import get_correlation_figure
+'''
+    Contains the server to run our application.
+'''
+from flask_failsafe import failsafe
 
-# Load data
-df = pd.read_csv("data/student_habits_performance.csv")
 
-# Initialize app
-app = dash.Dash(__name__)
-app.title = "Student Behavior Visualizations"
+@failsafe
+def create_app():
+    '''
+        Gets the underlying Flask server from our Dash app.
 
-# Layout
-app.layout = html.Div([
-    html.H1("Student Behavior Profiles & Academic Performance"),
-    
-    html.Div([
-        html.H2("Cluster-Based Scatterplot"),
-        dcc.Graph(figure=get_cluster_figure(df))
-    ]),
-    
-    html.Div([
-        html.H2("Habit Correlation Heatmap"),
-        dcc.Graph(figure=get_correlation_figure(df))
-    ])
-])
+        Returns:
+            The server to be run
+    '''
+    # the import is intentionally inside to work with the server failsafe
+    from app import app  # pylint: disable=import-outside-toplevel
+    return app.server
+
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    create_app().run(port="8050", debug=True)
