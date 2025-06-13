@@ -9,7 +9,7 @@ def get_cluster_figure(df):
         'sleep_hours', 'study_hours_per_day', 'screen_time',
         'stress_level', 'social_media_hours', 'attendance_percentage'
     ]
-    df = df.dropna(subset=habits + ['GPA', 'gender'])
+    df = df.dropna(subset=habits + ['gender'])
     X = StandardScaler().fit_transform(df[habits])
     pca = PCA(n_components=2)
     df[['PC1', 'PC2']] = pca.fit_transform(X)
@@ -25,7 +25,6 @@ def get_cluster_figure(df):
     df['cluster_name'] = df['cluster'].map(cluster_labels)
 
     grouped = df.groupby("cluster").agg({
-        'GPA': 'mean',
         'sleep_hours': 'mean',
         'study_hours_per_day': 'mean',
         'screen_time': 'mean',
@@ -36,7 +35,6 @@ def get_cluster_figure(df):
     def make_profile(row):
         return (
             f"<b>{cluster_labels[row.name]}</b><br>"
-            f"GPA: {row['GPA']}<br>"
             f"Sleep: {row['sleep_hours']} hrs<br>"
             f"Study: {row['study_hours_per_day']} hrs<br>"
             f"Screen Time: {row['screen_time']} hrs<br>"
