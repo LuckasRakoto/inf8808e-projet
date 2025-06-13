@@ -9,8 +9,8 @@ df = pd.read_csv("Student_Mental_health_and_academic_performance.csv")
 
 # Select habit-related features
 habits = [
-    'sleep_hours', 'study_hours_per_day', 'screen_time',
-    'stress_level', 'social_media_hours', 'attendance_percentage'
+    'sleep_hours', 'study_hours_per_day', 'netflix_hours',
+    'mental_health_rating', 'social_media_hours', 'attendance_percentage'
 ]
 
 # Clean data
@@ -41,7 +41,7 @@ grouped = df.groupby("cluster").agg({
     'GPA': 'mean',
     'sleep_hours': 'mean',
     'study_hours_per_day': 'mean',
-    'screen_time': 'mean',
+    'netflix_hours': 'mean',
     'social_media_hours': 'mean',
     'gender': lambda g: 100 * (g == 'female').mean()
 }).round(1)
@@ -52,7 +52,7 @@ def make_profile(row):
         f"Average GPA: {row['GPA']}<br>"
         f"Sleep: {row['sleep_hours']} hrs<br>"
         f"Study: {row['study_hours_per_day']} hrs<br>"
-        f"Screen Time: {row['screen_time']} hrs<br>"
+        f"Screen Time: {row['netflix_hours']} hrs<br>"
         f"Social Media: {row['social_media_hours']} hrs<br>"
         f"% Female: {row['gender']}%"
     )
