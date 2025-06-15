@@ -12,6 +12,7 @@ from waffle_chart import get_waffle_figure
 from sankey_chart import get_sankey_chart_figure
 
 app = dash.Dash(__name__)
+server = app.server
 app.title = 'Student Habits vs Performance'
 
 df = pd.read_csv("assets/data/student_habits_performance.csv")
