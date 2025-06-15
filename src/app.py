@@ -2,14 +2,13 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
-from cluster_scatter import get_cluster_figure
-from correlation_heatmap import get_correlation_figure
-from radar_chart import get_radar_chart
-from bar_chart import get_bar_chart_figure
-from waffle_chart import get_waffle_figure
-from sankey_chart import get_sankey_chart_figure
+from cluster_scatter import src.get_cluster_figure
+from correlation_heatmap import src.get_correlation_figure
+from radar_chart import src.get_radar_chart
+from bar_chart import src.get_bar_chart_figure
+from waffle_chart import src.get_waffle_figure
+from sankey_chart import src.get_sankey_chart_figure
 
 app = dash.Dash(__name__)
 server = app.server
