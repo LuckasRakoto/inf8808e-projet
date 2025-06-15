@@ -26,5 +26,5 @@ tenacity==8.1.0
 threadpoolctl==3.5.0
 Werkzeug==2.2.2
 zipp==3.10.0
-setuptools>=42
+setuptools==58.0.4
 wheel
