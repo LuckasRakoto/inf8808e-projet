@@ -3,18 +3,18 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import pandas as pd
 
-from cluster_scatter import src.get_cluster_figure
-from correlation_heatmap import src.get_correlation_figure
-from radar_chart import src.get_radar_chart
-from bar_chart import src.get_bar_chart_figure
-from waffle_chart import src.get_waffle_figure
-from sankey_chart import src.get_sankey_chart_figure
+from src.cluster_scatter import get_cluster_figure
+from src.correlation_heatmap import get_correlation_figure
+from src.radar_chart import get_radar_chart
+from src.bar_chart import get_bar_chart_figure
+from src.waffle_chart import get_waffle_figure
+from src.sankey_chart import get_sankey_chart_figure
 
 app = dash.Dash(__name__)
 server = app.server
 app.title = 'Student Habits vs Performance'
 
-df = pd.read_csv("assets/data/student_habits_performance.csv")
+df = pd.read_csv("src/assets/data/student_habits_performance.csv")
 
 habits = ['study_hours_per_day', 'social_media_hours', 'netflix_hours',
           'sleep_hours', 'diet_quality', 'exercise_frequency',
