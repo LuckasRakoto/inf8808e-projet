@@ -10,7 +10,7 @@ app = Dash(__name__)
 app.title = "Student Behavior Visualization"
 
 # Load the dataset
-data_path = "./data/Student_Mental_health_and_academic_performance.csv"
+data_path = "C:/Users/Propriétaire/Documents/GitHub/inf8808e-projet/src/assets/data/student_habits_performance.csv"
 df = pd.read_csv(data_path)
 
 # Generate figures
@@ -26,7 +26,7 @@ app.layout = html.Div(className='content', children=[
 
     html.Main(className='viz-container', children=[
         html.Section(children=[
-            html.H3("Cluster-Based Scatterplot"),
+            html.H3("Cluster-Based Scatterplot Profiles"),
             dcc.Graph(figure=cluster_fig)
         ]),
 
