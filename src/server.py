@@ -11,10 +11,10 @@ from dash import dcc, html
 import pandas as pd
 from cluster_scatter import get_cluster_figure
 from correlation_heatmap import get_correlation_figure
-from callback import register_callbacks
+#from callback import register_callbacks
 
 # Load data
-df = pd.read_csv("C:/Users/Propriétaire/Documents/GitHub/inf8808e-projet/src/assets/data/student_habits_performance.csv")
+#df = pd.read_csv("C:/Users/Propriétaire/Documents/GitHub/inf8808e-projet/src/assets/data/student_habits_performance.csv")
 
 
 def create_app():
@@ -29,7 +29,7 @@ def create_app():
     return app.server
 
     # Generate figures
-    cluster_fig = get_cluster_figure(df)
+    '''cluster_fig = get_cluster_figure(df)
     heatmap_fig = get_correlation_figure(df)
 
     # Layout
@@ -54,7 +54,7 @@ def create_app():
     ])
 
     # Register callbacks for interactivity
-    register_callbacks(app, df)
+    register_callbacks(app, df)'''
 
 if __name__ == "__main__":
     create_app().run(port="8050", debug=True)
