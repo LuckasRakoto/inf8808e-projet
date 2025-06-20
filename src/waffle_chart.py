@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from src.preprocess import preprocess_waffle_chart_data
+from preprocess import preprocess_waffle_chart_data
 
 def get_waffle_figure(df):
     df = preprocess_waffle_chart_data(df)
@@ -10,7 +10,7 @@ def get_waffle_figure(df):
 
     education_levels = ['None', 'High School', 'Bachelor', 'Master']
     performance_levels = ['Low', 'Mid', 'Top']
-    colors = {'Top': 'green', 'Mid': 'orange', 'Low': 'red'}
+    colors = {'Top': '#6DD2B0', 'Mid': '#ffce67', 'Low': '#cc6041'}
 
     # Create a lookup for totals per (education, performance)
     totals_lookup = {}
