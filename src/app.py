@@ -3,16 +3,20 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import pandas as pd
 
-from src.cluster_scatter import get_cluster_figure
-from src.correlation_heatmap import get_correlation_figure
-from src.radar_chart import get_radar_chart
-from src.bar_chart import get_bar_chart_figure
-from src.waffle_chart import get_waffle_figure
-from src.sankey_chart import get_sankey_chart_figure
+from src.cluster_scatter import get_cluster_figure # type: ignore
+from src.correlation_heatmap import get_correlation_figure # type: ignore
+from src.radar_chart import get_radar_chart # type: ignore
+from src.bar_chart import get_bar_chart_figure # type: ignore
+from src.waffle_chart import get_waffle_figure # type: ignore
+from src.sankey_chart import get_sankey_chart_figure # type: ignore
 
 app = dash.Dash(__name__)
 server = app.server
 app.title = 'Student Habits vs Performance'
+
+# Load the dataset
+data_path = "C:/Users/Propriétaire/Documents/GitHub/inf8808e-projet/src/assets/data/student_habits_performance.csv"
+df = pd.read_csv(data_path)
 
 df = pd.read_csv("src/assets/data/student_habits_performance.csv")
 
@@ -39,17 +43,20 @@ app.layout = html.Div([
         dcc.Graph(figure=get_bar_chart_figure(df))
     ]),
 
-    html.Div([
-        html.H2("Cluster-Based Scatterplot"),
-        dcc.Graph(figure=get_cluster_figure(df))
+    html.Main(className='viz-container', children=[
+        
+        html.Section(children=[
+            html.H3("Cluster-Based Scatterplot Profiles"),
+            dcc.Graph(figure=get_cluster_figure)
+        ]),
     ]),
 
     html.Div([
-        html.H2("Habit Correlation Heatmap"),
+        html.H3("Habit Correlation Heatmap"),
         dcc.Graph(figure=get_correlation_figure(df))
     ]),
 
-    html.H1("Performance Group Comparison (Radar Chart)"),
+    html.H3("Performance Group Comparison (Radar Chart)"),
 
     html.Div([
         html.Div([
@@ -106,7 +113,6 @@ app.layout = html.Div([
         },
         config={'displayModeBar': False}
     )
-
 ])
 
 # === CALLBACK ===
