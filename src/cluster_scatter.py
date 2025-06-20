@@ -9,8 +9,8 @@ def get_cluster_figure(df):
     # Features used for clustering
     habits = [
         'study_hours_per_day', 'social_media_hours', 'netflix_hours',
-        'attendance_percentage', 'sleep_hours', 'exercise_frequency',
-        'mental_health', 'exam_score'
+        'exercise_frequency', 'exam_score','sleep_hours','mental_health_rating',
+        'social_media_hours', 'attendance_percentage'
     ]
     
     # Drop rows with missing required fields
