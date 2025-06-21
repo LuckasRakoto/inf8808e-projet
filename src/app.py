@@ -3,8 +3,8 @@ from dash import html, dcc, Input, Output, State
 import pandas as pd
 import dash_bootstrap_components as dbc
 
+from correlation_heatmap import get_correlation_figure, assign_cluster_labels
 from cluster_scatter import get_cluster_figure
-from correlation_heatmap import get_correlation_figure
 from radar_chart import get_radar_chart
 from bar_chart import get_bar_chart_figure
 from waffle_chart import get_waffle_figure
@@ -15,6 +15,8 @@ server = app.server
 app.title = 'Student Habits vs Performance'
 
 df = pd.read_csv("assets/data/student_habits_performance.csv")
+df_clustered = assign_cluster_labels(df)
+available_clusters = ["All students"] + sorted(df_clustered['cluster_name'].unique())
 
 habits = [
     'study_hours_per_day', 'social_media_hours_per_day', 'netflix_hours_per_day',
@@ -68,6 +70,39 @@ From this bar chart, we can see that the top 20% group generally exhibits health
 - **Social Media and Netflix**: The top group spends less time on social media and Netflix, indicating that they may prioritize their time more effectively.
 - **Mental Health Rating**: The top performers have a higher average mental health rating, suggesting that mental well-being is linked to academic success.
 """
+
+correlation_desc = """The Habit Correlation Heatmap illustrates the strength and direction of relationships between various student habits. Each cell shows the correlation between two behaviors, with colors indicating positive or negative connections.
+This chart helps identify how habits like study time, social media use, sleep, and attendance interact with each other. Hovering over a cell reveals the exact correlation value and a brief explanation to better understand these patterns.
+This insight supports students and educators in recognizing habits that influence academic success and well-being."""
+
+
+correlation_desc_post ="""From this chart, we can see that across all student profiles, study hours strongly correlate with higher exam scores, making it the most important factor for academic success. Excessive social media use negatively impacts exam performance and attendance, especially for Media Addicts and Balanced Learners. Sleep consistently shows positive links to exam results and mental health, highlighting its role in well-being and performance. Attendance correlates moderately with exam scores and is negatively affected by social media in some groups. Exercise has a small positive effect on both mental health and academics. Overall, good study habits, adequate sleep, and limited social media use are key to better academic outcomes and well-being.
+
+"""
+correlation_controls = html.Div([
+    html.Label("Select Cluster Group:", style={
+        'color': 'black',
+        'fontSize': '18px',
+        'fontWeight': '600',
+        'textAlign': 'center',
+        'display': 'block',
+        'marginBottom': '10px'
+    }),
+
+    html.Div([
+        dcc.Dropdown(
+            id='cluster-dropdown',
+            options=[{'label': name, 'value': name} for name in available_clusters],
+            value='All students',
+            clearable=False,
+            style={'width': '300px'}
+        )
+    ], style={'margin': '0 auto', 'marginBottom': '30px', 'width': '300px'}),
+
+    dcc.Graph(id='correlation-graph', figure=get_correlation_figure(df, selected_cluster='All students'))
+])
+
+
 # Create sections to compartmentalize the charts
 def create_section(title, description, content, post_description=None, bgcolor="white", title_color="black", description_color="black"):
     return html.Div(
@@ -204,17 +239,19 @@ sections = [
                    dcc.Graph(figure=get_bar_chart_figure(df)), 
                    bgcolor='#78c2ad',
                    title_color='white',
-                   post_description=dcc.Markdown(bar_post_desc),
+				   post_description=dcc.Markdown(bar_post_desc),
                    description_color='white'),
     create_section("Cluster-Based Scatterplot Profiles", "See the clustering patterns of student habits in the dataset.",
                    dcc.Graph(figure=get_cluster_figure(df)), 
                    bgcolor='#cc6041',
                    title_color='white',
                    description_color='white'),
-    create_section("Habit Correlation Heatmap", "Explore the correlations between different student habits.",
-                   dcc.Graph(figure=get_correlation_figure(df)), 
+    create_section("Habit Correlation Heatmap", 
+                   correlation_desc,
+                   correlation_controls,
                    bgcolor='#569caa',
                    title_color='white',
+                   post_description=dcc.Markdown(correlation_desc_post),
                    description_color='white'),
     create_section("Waffle Chart of Student Groups",
                    waffle_desc,
@@ -384,6 +421,12 @@ def update_radar_chart(n_clicks, *user_values):
 def update_sankey_chart(selected_habit, selected_left_type):
     return get_sankey_chart_figure(df, selected_left_type=selected_left_type, selected_habit=selected_habit)
 
+@app.callback(
+    Output('correlation-graph', 'figure'),
+    Input('cluster-dropdown', 'value')
+)
+def update_correlation_figure(selected_cluster):
+    return get_correlation_figure(df, selected_cluster)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
