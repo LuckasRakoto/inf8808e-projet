@@ -32,8 +32,16 @@ slider_config = {
     'mental_health_rating': {'min': 1, 'max': 10, 'step': 1}
 }
 
+waffle_desc = """The waffle chart visualizes the relationship between the students' academic performance and their parents' education level.
+Each column group represents one of four parental education categories: None, High School, Bachelor, and Master.
+Inside each group, colored squares indicate the number of students performing at different levels.
+Hovering over each square reveals a tooltip with detailed information: the education level, performance tier, and number of students that fall into that specific combination."""
+
+waffle_post_desc = "From what we see in the chart, a parent's education level doesn't strongly determine a student's performance. For example, having parents with a Master's degree doesn't necessarily mean a student will be a top performer, and students with parents who have no formal education can still perform well. This suggests that other factors beyond parental education play a more significant role in academic success."
+
+
 # Create sections to compartmentalize the charts
-def create_section(title, description, content, bgcolor="white", title_color="black", description_color="black"):
+def create_section(title, description, content, post_description=None, bgcolor="white", title_color="black", description_color="black"):
     return html.Div(
         className='section',
         style={
@@ -81,11 +89,19 @@ def create_section(title, description, content, bgcolor="white", title_color="bl
                         'padding': '20px',
                         'borderRadius': '10px',
                         'boxShadow': '0 4px 15px rgba(0,0,0,0.15)'
-                    })
+                    }),
+                    html.P(post_description, style={
+                        'color': description_color,
+                        'fontSize': '1.3rem',
+                        'marginTop': '25px',
+                        'fontWeight': '300',
+                        'lineHeight': '1.4'
+                    }) if post_description else None
                 ]
             )
         ]
     )
+
 
 #Slider and button
 def slider_controls():
@@ -171,8 +187,10 @@ sections = [
                    bgcolor='#569caa',
                    title_color='white',
                    description_color='white'),
-    create_section("Waffle Chart of Student Groups", "Visualize group proportions in a waffle chart.",
-                   dcc.Graph(figure=get_waffle_figure(df)), 
+    create_section("Waffle Chart of Student Groups",
+                   waffle_desc,
+                   dcc.Graph(figure=get_waffle_figure(df)),
+                   post_description=waffle_post_desc,
                    bgcolor='#f3969a',
                    title_color='white',
                    description_color='white'),
