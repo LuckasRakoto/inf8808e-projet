@@ -156,7 +156,7 @@ def radar_section():
     )
 
 sections = [
-    create_section("Average Student Habits", "Explore the average habits of top, low, and all students.",
+    create_section("How Habits Impact Academic Performance", "Explore the average habits of the top 20% and the lowest 40% compared to all students.",
                    dcc.Graph(figure=get_bar_chart_figure(df)), 
                    bgcolor='#78c2ad',
                    title_color='white',
@@ -198,7 +198,7 @@ app.layout = html.Div([
             'fontWeight': '700',
             'color':'white'
         }),
-        html.P("Some text", style={
+        html.P("Discover how lifestyle choices and study habits shape academic success. Explore behavior patterns across performance groups and see how your own habits compare to top performers and the student average..", style={
             'fontSize': '1.5rem',
             'textAlign': 'center',
             'margin': '0 0 40px 0',

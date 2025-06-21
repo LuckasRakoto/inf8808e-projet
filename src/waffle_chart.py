@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from src.preprocess import preprocess_waffle_chart_data
+from preprocess import preprocess_waffle_chart_data
 
 def get_waffle_figure(df):
     df = preprocess_waffle_chart_data(df)

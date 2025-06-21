@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-from src.preprocess import preprocess_sankey_chart_data
+from preprocess import preprocess_sankey_chart_data
 
 def get_sankey_chart_figure(df):
     
