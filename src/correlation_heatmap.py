@@ -71,7 +71,7 @@ def get_correlation_figure(df, selected_cluster='All students'):
         text=hovertext,
         hoverinfo="text", 
         zmin=-1, zmax=1,
-        colorscale='YlOrRd',
+        colorscale='RdBu',
         colorbar=dict(
             title=dict(
                 text="Correlation",
