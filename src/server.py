@@ -9,8 +9,8 @@
 import dash
 from dash import dcc, html
 import pandas as pd
-from cluster_scatter import get_cluster_figure
-from correlation_heatmap import get_correlation_figure
+from src.cluster_scatter import get_cluster_figure
+from src.correlation_heatmap import get_correlation_figure
 #from callback import register_callbacks
 
 # Load data

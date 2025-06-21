@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
-from preprocess import get_groups_radar_chart
-from hover_template import get_radar_hover_template
+from src.preprocess import get_groups_radar_chart
+from src.hover_template import get_radar_hover_template
 
 
 def get_radar_chart(df, user_data=None):
