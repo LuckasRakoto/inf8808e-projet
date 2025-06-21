@@ -8,48 +8,49 @@ def get_bar_chart_figure(df):
     ]
     
     pretty_labels = [
-        'Study Hours per Day', 'Social Media Hours', 'Netflix Hours',
-        'Sleep Hours', 'Diet Quality', 'Exercise Frequency', 'Mental Health Rating'
+        'Study Hours per Day', 'Sleep Hours', 'Social Media Hours', 'Netflix Hours',
+         'Exercise Frequency', 'Mental Health Rating', 'Diet Quality'
     ]
+    
+    unit_by_label = {
+        'Study Hours per Day': 'hours',
+        'Sleep Hours': 'hours',
+        'Social Media Hours': 'hours',
+        'Netflix Hours': 'hours',
+        'Exercise Frequency': 'times/week',
+        'Mental Health Rating': '(1–10 scale)',
+        'Diet Quality': '(1–3 scale)',
+    }
     
     diet_mapping = {'Poor': 1, 'Fair': 2, 'Good': 3}
     df['diet_quality_numeric'] = df['diet_quality'].map(diet_mapping)
-
-    
-    quantiles = df['exam_score'].quantile([0.25, 0.75])
-    low_df = df[df['exam_score'] <= quantiles[0.25]]
-    top_df = df[df['exam_score'] >= quantiles[0.75]]
+     
+    quantiles = df['exam_score'].quantile([0.4, 0.8])
+    low_df = df[df['exam_score'] <= quantiles[0.4]]
+    top_df = df[df['exam_score'] >= quantiles[0.8]]
     all_df = df
+    
 
     low_means = low_df[habits].mean().round(2)
     top_means = top_df[habits].mean().round(2)
     all_means = all_df[habits].mean().round(2)
 
     fig = go.Figure()
+
     
-    fig.add_trace(go.Bar(
-        x=pretty_labels,
-        y=top_means.values,
-        name='Top Performers',
-        marker_color='green',
-        hovertemplate=hover_template("Top Performers"),
-    ))
-    
-    fig.add_trace(go.Bar(
-        x=pretty_labels,
-        y=low_means.values,
-        name='Low Performers',
-        marker_color='red',
-        hovertemplate=hover_template("Low Performers"),
-    ))
-    
-    fig.add_trace(go.Bar(
-        x=pretty_labels,
-        y=all_means.values,
-        name='All Students',
-        marker_color='grey',
-        hovertemplate=hover_template("All Students"),
-    ))
+    for means, name in zip(
+        [top_means, low_means, all_means],
+        ['Top Performers', 'Low Performers', 'All Students']
+    ):
+        fig.add_trace(go.Bar(
+            x=pretty_labels,
+            y=means.values,
+            name=name,
+            customdata=[
+                [unit_by_label[label]] for label in pretty_labels
+            ],
+            hovertemplate=hover_template(name)
+        ))
 
     fig.update_layout(
         title="Average Student Habits by Performance Group",
@@ -62,9 +63,10 @@ def get_bar_chart_figure(df):
 
     return fig
 
-
 def hover_template(group):
-    return (f"Group: {group}<br>"
-            "Habit: %{x}<br>"
-            "Average: %{y:.2f}<extra></extra>")
+    return (
+        f"Group: {group}<br>"
+        "Habit: %{x}<br>"
+        "Average: %{y:.2f} %{customdata[0]}<extra></extra>"
+    )
 
