@@ -71,6 +71,14 @@ From this bar chart, we can see that the top 20% group generally exhibits health
 - **Mental Health Rating**: The top performers have a higher average mental health rating, suggesting that mental well-being is linked to academic success.
 """
 
+cluster_desc = """This scatter plot displays distinct student profiles based on daily habits and academic performance where each dot represents a student, colored by profile group: The Academic Achiever, The Social Butterfly, The Minimalist, or The Balanced Learner. 
+Hover to get more insight and click for more details on the profiles. """
+
+
+cluster_desc_post ="""These profiles were generated using the k-means clustering algorithm, which grouped students based on 8 key features. The 2D scatter plot displays a projection of these features using Principal Component Analysis (PCA), allowing similar student behavior patterns to appear closer together visually.
+
+"""
+
 correlation_desc = """The Habit Correlation Heatmap illustrates the strength and direction of relationships between various student habits. Each cell shows the correlation between two behaviors, with colors indicating positive or negative connections.
 This chart helps identify how habits like study time, social media use, sleep, and attendance interact with each other. Hovering over a cell reveals the exact correlation value and a brief explanation to better understand these patterns.
 This insight supports students and educators in recognizing habits that influence academic success and well-being."""
@@ -242,9 +250,11 @@ sections = [
 				   post_description=dcc.Markdown(bar_post_desc),
                    description_color='white'),
     create_section("Cluster-Based Scatterplot Profiles", "See the clustering patterns of student habits in the dataset.",
-                   dcc.Graph(figure=get_cluster_figure(df)), 
+                   cluster_desc,
+		   dcc.Graph(figure=get_cluster_figure(df)), 
                    bgcolor='#cc6041',
                    title_color='white',
+		   post_description=dcc.Markdown(cluster_desc_post),
                    description_color='white'),
     create_section("Habit Correlation Heatmap", 
                    correlation_desc,
