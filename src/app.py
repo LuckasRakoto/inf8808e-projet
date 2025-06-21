@@ -32,8 +32,38 @@ slider_config = {
     'mental_health_rating': {'min': 1, 'max': 10, 'step': 1}
 }
 
+# Sankey dropdown options
+sankey_left_type_options = [
+    {'label': 'Age', 'value': 'age'},
+    {'label': 'Gender', 'value': 'gender'}
+]
+
+sankey_habit_options = [
+    {'label': 'Study Hours per Day', 'value': 'study_hours_per_day'},
+    {'label': 'Sleep Hours per Day', 'value': 'sleep_hours_per_day'},
+    {'label': 'Social Media Hours per Day', 'value': 'social_media_hours_per_day'},
+    {'label': 'Netflix Hours per Day', 'value': 'netflix_hours_per_day'},
+    {'label': 'Exercise Frequency per Week', 'value': 'exercise_frequency_per_week'},
+    {'label': 'Mental Health Rating', 'value': 'mental_health_rating'},
+    {'label': 'Diet Quality', 'value': 'diet_quality'}
+]
+
+waffle_desc = """The waffle chart visualizes the relationship between the students' academic performance and their parents' education level.
+Each column group represents one of four parental education categories: None, High School, Bachelor, and Master.
+Inside each group, colored squares indicate the number of students performing at different levels.
+Hovering over each square reveals a tooltip with detailed information: the education level, performance tier, and number of students that fall into that specific combination."""
+
+waffle_post_desc = "From what we see in the chart, a parent's education level doesn't strongly determine a student's performance. For example, having parents with a Master's degree doesn't necessarily mean a student will be a top performer, and students with parents who have no formal education can still perform well. This suggests that other factors beyond parental education play a more significant role in academic success."
+
+sankey_desc = """The Sankey chart illustrates how students' demographic attributes (either age or gender) relate to their academic performance levels (Low, Mid, or Top). The flow between groups shows how students are distributed across performance categories based on their age or gender, with the width of each link representing the number of students. The color of each node indicates the group type and performance level.
+
+Users can interact with the chart using two dropdown menus: one to switch between 'Age' and 'Gender' as the grouping variable on the left, and another to select a specific habit to visualize (e.g., study hours, sleep, exercise, etc.). Hovering over the links reveals the performance group, number of students, and the average value of the selected habit. Hovering over nodes gives a summary for each demographic or performance group."""
+
+sankey_post_desc = """From the chart, we can see that there are variations in habits across different performance groups, but the patterns are not always consistent. For example, students with higher mental health ratings or more study hours don’t always fall into the top performance category. This suggests that while certain habits may influence performance, they are not the sole determining factors, and academic success likely depends on a combination of behaviors and other underlying factors."""
+
+
 # Create sections to compartmentalize the charts
-def create_section(title, description, content, bgcolor="white", title_color="black", description_color="black"):
+def create_section(title, description, content, post_description=None, bgcolor="white", title_color="black", description_color="black"):
     return html.Div(
         className='section',
         style={
@@ -81,11 +111,19 @@ def create_section(title, description, content, bgcolor="white", title_color="bl
                         'padding': '20px',
                         'borderRadius': '10px',
                         'boxShadow': '0 4px 15px rgba(0,0,0,0.15)'
-                    })
+                    }),
+                    html.P(post_description, style={
+                        'color': description_color,
+                        'fontSize': '1.3rem',
+                        'marginTop': '25px',
+                        'fontWeight': '300',
+                        'lineHeight': '1.4'
+                    }) if post_description else None
                 ]
             )
         ]
     )
+
 
 #Slider and button
 def slider_controls():
@@ -171,16 +209,47 @@ sections = [
                    bgcolor='#569caa',
                    title_color='white',
                    description_color='white'),
-    create_section("Waffle Chart of Student Groups", "Visualize group proportions in a waffle chart.",
-                   dcc.Graph(figure=get_waffle_figure(df)), 
+    create_section("Waffle Chart of Student Groups",
+                   waffle_desc,
+                   dcc.Graph(figure=get_waffle_figure(df)),
+                   post_description=waffle_post_desc,
                    bgcolor='#f3969a',
                    title_color='white',
                    description_color='white'),
-    create_section("Sankey Chart of Habit Flows", "Explore flows and relationships between habits using a Sankey chart.",
-                   dcc.Graph(figure=get_sankey_chart_figure(df)), 
-                   bgcolor='#ffce67',
-                   title_color='white',
-                   description_color='white'),
+    create_section(
+        "Sankey Chart of Habit Flows",
+        sankey_desc,
+        html.Div([  # Wrap these two inside one container
+            html.Div([
+                html.Label("Group By (Left Nodes):"),
+                dcc.Dropdown(
+                    id='sankey-left-dropdown',
+                    options=sankey_left_type_options,
+                    value='age',
+                    clearable=False,
+                    style={'width': '250px'}
+                )
+            ], style={'display': 'inline-block', 'marginRight': '40px'}),
+
+            html.Div([
+                html.Label("Habit Metric:"),
+                dcc.Dropdown(
+                    id='sankey-habit-dropdown',
+                    options=sankey_habit_options,
+                    value='study_hours_per_day',
+                    clearable=False,
+                    style={'width': '300px'}
+                )
+            ], style={'display': 'inline-block'}),
+
+            dcc.Graph(id='sankey-graph', figure=get_sankey_chart_figure(df, selected_left_type='age', selected_habit='study_hours_per_day'))
+        ], style={'textAlign': 'center', 'marginBottom': '20px'}),  # single content argument ends here
+        post_description=sankey_post_desc,
+        bgcolor='#ffce67',
+        title_color='white',
+        description_color='white'
+    ),
+
     create_section("Where Do You Fit In?",
                    "Everyone’s habits are unique! Use the sliders to generate a personal profile and see where you align or differ from other student groups. What can you learn from the data?",
                    radar_section(),
@@ -230,7 +299,7 @@ app.layout = html.Div([
     dcc.Store(id='blur-trigger')
 ])
 
-#To update the hover of the button and the slider
+# To update the hover of the button and the slider
 app.clientside_callback(
     """
     function(n_clicks) {
@@ -247,8 +316,6 @@ app.clientside_callback(
     Output('blur-trigger', 'data'),
     Input('update-button', 'n_clicks')
 )
-
-
 
 app.clientside_callback(
     """
@@ -275,15 +342,11 @@ app.clientside_callback(
 )
 
 
-
-
 @app.callback(
     Output('radar-chart', 'figure'),
     Input('update-button', 'n_clicks'),
     [State(h, 'value') for h in habits]
 )
-
-
 def update_radar_chart(n_clicks, *user_values):
     if not user_values or any(v is None for v in user_values):
         return get_radar_chart(df)
@@ -304,6 +367,15 @@ def update_radar_chart(n_clicks, *user_values):
     ]
 
     return get_radar_chart(df, user_data=normalized)
+
+
+@app.callback(
+    Output('sankey-graph', 'figure'),
+    [Input('sankey-habit-dropdown', 'value'),
+     Input('sankey-left-dropdown', 'value')]
+)
+def update_sankey_chart(selected_habit, selected_left_type):
+    return get_sankey_chart_figure(df, selected_left_type=selected_left_type, selected_habit=selected_habit)
 
 
 if __name__ == '__main__':
