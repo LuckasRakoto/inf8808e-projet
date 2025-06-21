@@ -61,7 +61,13 @@ Users can interact with the chart using two dropdown menus: one to switch betwee
 
 sankey_post_desc = """From the chart, we can see that there are variations in habits across different performance groups, but the patterns are not always consistent. For example, students with higher mental health ratings or more study hours don’t always fall into the top performance category. This suggests that while certain habits may influence performance, they are not the sole determining factors, and academic success likely depends on a combination of behaviors and other underlying factors."""
 
+bar_post_desc = """
+From this bar chart, we can see that the top 20% group generally exhibits healthier habits than the lowest 40% group. This suggests that certain lifestyle choices may be associated with academic success. The habits that stand out the most are:
 
+- **Study Hours**: The top 20% group studies significantly more hours per day compared to the lowest 40%.
+- **Social Media and Netflix**: The top group spends less time on social media and Netflix, indicating that they may prioritize their time more effectively.
+- **Mental Health Rating**: The top performers have a higher average mental health rating, suggesting that mental well-being is linked to academic success.
+"""
 # Create sections to compartmentalize the charts
 def create_section(title, description, content, post_description=None, bgcolor="white", title_color="black", description_color="black"):
     return html.Div(
@@ -198,6 +204,7 @@ sections = [
                    dcc.Graph(figure=get_bar_chart_figure(df)), 
                    bgcolor='#78c2ad',
                    title_color='white',
+                   post_description=dcc.Markdown(bar_post_desc),
                    description_color='white'),
     create_section("Cluster-Based Scatterplot Profiles", "See the clustering patterns of student habits in the dataset.",
                    dcc.Graph(figure=get_cluster_figure(df)), 
